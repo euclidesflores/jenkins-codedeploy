@@ -1,5 +1,9 @@
 provider "docker" {}
 
+locals {
+  jenkins_plugins = join(" ", split("\n", file("${path.module}/jenkins-plugins.txt")))
+}
+
 resource "docker_image" "jenkins" {
   name         = "jenkinsci/blueocean"
   keep_locally = false
@@ -43,3 +47,8 @@ resource "docker_container" "jenkins" {
   }
 }
 
+resource "null_resource" "jenkins_plugins" {
+  provisioner "local-exec" {
+    command = "docker exec ${docker_container.jenkins.hostname} jenkins-plugin-cli --plugins ${local.jenkins_plugins}"
+  }
+}

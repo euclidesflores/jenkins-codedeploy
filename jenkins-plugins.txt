@@ -1,0 +1,8 @@
+mailer:latest
+ldap:latest
+ssh-slaves:latest
+timestamper:latest
+codedeploy:latest
+aws-codebuild:latest
+http_request:latest
+file-operations:latest
