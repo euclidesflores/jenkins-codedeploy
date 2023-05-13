@@ -14,6 +14,14 @@ resource "aws_s3_bucket" "jenkins" {
   bucket = "fibonacci-${random_pet.suffix.id}"
 }
 
+resource "aws_s3_bucket_versioning" "jenkins" {
+  bucket = aws_s3_bucket.jenkins.id
+
+  versioning_configuration {
+    status = "Enabled"
+  }
+}
+
 resource "aws_s3_bucket_ownership_controls" "jenkins" {
   bucket = aws_s3_bucket.jenkins.id
   rule {
@@ -170,3 +178,46 @@ resource "aws_codebuild_project" "jenkins" {
     Environment = "Dev"
   }
 }
+
+data "aws_iam_policy_document" "code_deploy" {
+  statement {
+    effect = "Allow"
+
+    principals {
+      type        = "Service"
+      identifiers = ["codedeploy.amazonaws.com"]
+    }
+
+    actions = ["sts:AssumeRole"]
+  }
+}
+
+resource "aws_iam_role" "code_deploy" {
+  name               = "code-deploy"
+  assume_role_policy = data.aws_iam_policy_document.code_deploy.json
+}
+
+# resource "aws_iam_role_policy" "code_deploy" {
+#   role   = aws_iam_role.code_deploy.name
+#   policy = data.aws_iam_policy_document.code_deploy.json
+# }
+
+resource "aws_codedeploy_app" "jenkins" {
+  compute_platform = "Lambda"
+  name             = aws_codebuild_project.jenkins.name
+}
+
+resource "aws_codedeploy_deployment_group" "jenkins" {
+  app_name              = aws_codebuild_project.jenkins.name
+  deployment_group_name = aws_codedeploy_app.jenkins.name
+
+  service_role_arn = aws_iam_role.code_deploy.arn
+
+  deployment_config_name = "CodeDeployDefault.LambdaAllAtOnce"
+
+  deployment_style {
+    deployment_option = "WITH_TRAFFIC_CONTROL"
+    deployment_type   = "BLUE_GREEN"
+  }
+}
+  

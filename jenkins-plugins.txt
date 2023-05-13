@@ -6,3 +6,4 @@ codedeploy:latest
 aws-codebuild:latest
 http_request:latest
 file-operations:latest
+pipeline-aws:1.43

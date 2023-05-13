@@ -51,4 +51,8 @@ resource "null_resource" "jenkins_plugins" {
   provisioner "local-exec" {
     command = "docker exec ${docker_container.jenkins.hostname} jenkins-plugin-cli --plugins ${local.jenkins_plugins}"
   }
+
+  provisioner "local-exec" {
+    command = "docker exec --user root ${docker_container.jenkins.hostname} apk --no-cache add python3 py3-pip && pip3 install --upgrade pip && pip3 install --no-cache-dir awscli"
+  }
 }

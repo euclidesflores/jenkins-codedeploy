@@ -3,7 +3,7 @@ variable "aws_region" {
 }
 
 variable "repository" {
-  default = "https://github.com/euclidesflores/fibonacci-app"
+  default = "https://github.com/euclidesflores/fibonacci-app.git"
 }
 
 variable "vpc_id" {
