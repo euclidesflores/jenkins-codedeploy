@@ -23,8 +23,10 @@ pipeline-aws:1.43
 ```
 
 ## awscodebuild/awscodebuild.tf
-This file neatly installs the necessary resources to enable the seamless usage of CodeBuild, CodeDeploy, and Jenkins.
+This file neatly installs the necessary resources to enable the seamless usage of CodeBuild, CodeDeploy, and Jenkins: buckets, policies, permissions, roles, etc.
 
+
+Apply
 ```
 terraform apply -auto-approve
 ```
